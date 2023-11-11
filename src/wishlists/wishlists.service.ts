@@ -1,4 +1,8 @@
-import {BadRequestException, Injectable, NotFoundException} from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateWishlistDto } from './dto/create-wishlist.dto';
 import { UpdateWishlistDto } from './dto/update-wishlist.dto';
 import { User } from '../users/entities/user.entity';
@@ -38,18 +42,18 @@ export class WishlistsService {
   findAll(): Promise<Wishlist[]> {
     return this.wishlistRepository.find();
   }
- async findWishlistById(id: number) {
+  async findWishlistById(id: number) {
     const wishlist = await this.wishlistRepository.findOne({
-      where: {id},
-      relations: { owner: true, items: true }
-    })
-   if (!wishlist) {
-     throw new NotFoundException('Вишлист не найден')
-   }
-   return wishlist;
+      where: { id },
+      relations: { owner: true, items: true },
+    });
+    if (!wishlist) {
+      throw new NotFoundException('Вишлист не найден');
+    }
+    return wishlist;
   }
   async updateWishlist(id: number, updateWishlistDto: UpdateWishlistDto) {
-    const wishlist = await this.findWishlistById(id)
+    const wishlist = await this.findWishlistById(id);
 
     if (!wishlist) {
       throw new NotFoundException('Вишлист не найден');
@@ -62,7 +66,7 @@ export class WishlistsService {
   }
 
   async removeWishlist(id: number) {
-    const wishlist = await this.findWishlistById(id)
+    const wishlist = await this.findWishlistById(id);
 
     if (!wishlist) {
       throw new NotFoundException('Вишлист не найден');

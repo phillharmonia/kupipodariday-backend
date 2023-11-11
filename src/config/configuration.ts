@@ -12,6 +12,6 @@ export default () => ({
   },
   jwt: {
     secret: process.env.JWT_SECRET || 'super_secret',
-    ttl: parseInt(process.env.JWT_TTL, 10) || 30000
+    ttl: parseInt(process.env.JWT_TTL, 10) || 30000,
   },
 });

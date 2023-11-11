@@ -1,10 +1,14 @@
-import {ForbiddenException, Injectable, NotFoundException} from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateWishDto } from './dto/create-wish.dto';
-import {DataSource, Repository} from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { Wish } from './entities/wish.entity';
 import { User } from '../users/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import {UpdateWishDto} from "./dto/update-wish.dto";
+import { UpdateWishDto } from './dto/update-wish.dto';
 
 @Injectable()
 export class WishesService {
@@ -36,12 +40,12 @@ export class WishesService {
     });
   }
   async findWishById(id: number) {
-    const wish =  await this.wishRepository.findOne({
-      where: {id},
-      relations: {offers: true, owner: true},
-    })
+    const wish = await this.wishRepository.findOne({
+      where: { id },
+      relations: { offers: true, owner: true },
+    });
     if (!wish) {
-      throw new NotFoundException('Не удалось найти подарок')
+      throw new NotFoundException('Не удалось найти подарок');
     }
     return wish;
   }
@@ -53,7 +57,9 @@ export class WishesService {
     }
 
     if (wish.raised > 0) {
-      throw new ForbiddenException('Нельзя изменить карточку, которую уже поддержали');
+      throw new ForbiddenException(
+        'Нельзя изменить карточку, которую уже поддержали',
+      );
     }
 
     Object.assign(wish, updateWishDto);
@@ -64,7 +70,7 @@ export class WishesService {
   async removeWish(id: number, user: User) {
     const wish = await this.findWishById(id);
     if (wish.owner.id !== user.id) {
-      throw new ForbiddenException('У вас нет прав на удаление этой карточки')
+      throw new ForbiddenException('У вас нет прав на удаление этой карточки');
     }
     await this.wishRepository.remove(wish);
   }

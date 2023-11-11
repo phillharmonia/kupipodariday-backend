@@ -1,14 +1,8 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  ManyToOne,
-  OneToMany, CreateDateColumn, UpdateDateColumn,
-} from 'typeorm';
+import { Entity, Column, ManyToOne, OneToMany } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 import { Offer } from '../../offers/entities/offer.entity';
-import {IsDate, IsInt, IsOptional, IsString, IsUrl, Length} from 'class-validator';
-import {DefaultEntity} from "../../entity/default-entity";
+import { IsInt, IsOptional, IsString, IsUrl, Length } from 'class-validator';
+import { DefaultEntity } from '../../entity/default-entity';
 
 @Entity()
 export class Wish extends DefaultEntity {

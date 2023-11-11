@@ -9,7 +9,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { HashService } from '../hash/hash.service';
-import {Wish} from "../wishes/entities/wish.entity";
+import { Wish } from '../wishes/entities/wish.entity';
 
 @Injectable()
 export class UsersService {
@@ -46,8 +46,8 @@ export class UsersService {
 
   async findByUsername(username: string): Promise<User> {
     const name = this.userRepository.findOneBy({ username });
-    if(!name) {
-      throw new NotFoundException('Пользователь не существует')
+    if (!name) {
+      throw new NotFoundException('Пользователь не существует');
     }
     return name;
   }

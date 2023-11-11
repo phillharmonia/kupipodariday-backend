@@ -6,7 +6,8 @@ import {
   Request,
   UseGuards,
   Patch,
-  Post, NotFoundException,
+  Post,
+  NotFoundException,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -24,20 +25,20 @@ export class UserController {
 
   @Get('me/wishes')
   async getMeWishes(@Request() req) {
-    return await this.usersService.findUserWishes(req.user.id)
+    return await this.usersService.findUserWishes(req.user.id);
   }
   @Get(':username')
   async getUsername(@Param('username') username: string): Promise<User> {
     const user = await this.usersService.findByUsername(username);
     if (!user) {
-      throw new NotFoundException('Пользователь с таким именем не сущетсвует')
+      throw new NotFoundException('Пользователь с таким именем не сущетсвует');
     }
-    return user
+    return user;
   }
   @Get(':username/wishes')
   async getUsernameWishes(@Param('username') username: string) {
-    const {id} = await this.usersService.findByUsername(username)
-    return this.usersService.findUserWishes(id)
+    const { id } = await this.usersService.findByUsername(username);
+    return this.usersService.findUserWishes(id);
   }
   @Post('find')
   async findByQuery(@Body('query') query: string): Promise<User> {

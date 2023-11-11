@@ -8,14 +8,14 @@ import {
 } from 'typeorm';
 import { Wish } from '../../wishes/entities/wish.entity';
 import { User } from '../../users/entities/user.entity';
-import {IsString, IsUrl, Length, MaxLength} from "class-validator";
+import { IsString, IsUrl, Length } from 'class-validator';
 @Entity()
 export class Wishlist {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
-  @Length(1,250)
+  @Length(1, 250)
   @IsString()
   name: string;
 
