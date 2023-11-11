@@ -8,18 +8,19 @@ import {
 } from 'typeorm';
 import { Wish } from '../../wishes/entities/wish.entity';
 import { User } from '../../users/entities/user.entity';
+import {IsString, IsUrl, Length, MaxLength} from "class-validator";
 @Entity()
 export class Wishlist {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ length: 250 })
+  @Column()
+  @Length(1,250)
+  @IsString()
   name: string;
 
-  @Column({ length: 1500 })
-  description: string;
-
   @Column()
+  @IsUrl()
   image: string;
 
   @ManyToMany(() => Wish)
@@ -27,5 +28,5 @@ export class Wishlist {
   items: Wish[];
 
   @ManyToOne(() => User, (user) => user.wishlists)
-  user: User;
+  owner: User;
 }

@@ -1,8 +1,9 @@
 export default () => ({
   server: {
-    port: parseInt(process.env.PORT, 10) || 3000,
+    port: parseInt(process.env.PORT, 10) || 3002,
   },
   database: {
+    type: 'postgres',
     host: process.env.DB_HOST || 'localhost',
     port: parseInt(process.env.DB_PORT, 10) || 5432,
     user: process.env.DB_USER || 'student',
@@ -11,6 +12,6 @@ export default () => ({
   },
   jwt: {
     secret: process.env.JWT_SECRET || 'super_secret',
-    ttl: process.env.JWT_TTL || '30000s',
+    ttl: parseInt(process.env.JWT_TTL, 10) || 30000
   },
 });

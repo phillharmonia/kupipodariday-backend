@@ -1,10 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
-import { HashService } from '../hash/hash.service'; // Импортируйте библиотеку bcryptjs
+import { HashService } from '../hash/hash.service';
+import {Wish} from "../wishes/entities/wish.entity";
 
 @Injectable()
 export class UsersService {
@@ -22,29 +27,59 @@ export class UsersService {
       ...createUserDto,
       password: hashedPassword,
     });
-    return this.userRepository.save(user);
+    try {
+      await this.userRepository.save(user);
+      return user;
+    } catch (err) {
+      if (err.code === '23505') {
+        throw new ConflictException(
+          'Пользователь с такой почтой или именем уже существует',
+        );
+      }
+      throw err;
+    }
   }
 
   async findById(id: number): Promise<User> {
-    const user = await this.userRepository.findOneBy({ id });
-    return user;
-  }
-  async findByEmail(email: string): Promise<User> {
-    const user = await this.userRepository.findOneBy({ email });
-    return user;
+    return this.userRepository.findOneBy({ id });
   }
 
   async findByUsername(username: string): Promise<User> {
-    const user = await this.userRepository.findOneBy({ username });
+    const name = this.userRepository.findOneBy({ username });
+    if(!name) {
+      throw new NotFoundException('Пользователь не существует')
+    }
+    return name;
+  }
+
+  async updateUser(id: number, updateUserDto: UpdateUserDto): Promise<User> {
+    if (updateUserDto.password) {
+      updateUserDto.password = await this.hashService.hashPassword(
+        updateUserDto.password,
+      );
+    }
+    await this.userRepository.update(id, updateUserDto);
+    return this.findById(id);
+  }
+
+  async findMany(query: string): Promise<User> {
+    const user = await this.userRepository.findOne({
+      where: [{ username: query }, { email: query }],
+    });
+    if (!user) {
+      throw new NotFoundException(`Пользователь не существует`);
+    }
     return user;
   }
-
-  async findAll(): Promise<User[]> {
-    return await this.userRepository.find();
-  }
-
-  async updateOne(id: number, updateData: UpdateUserDto): Promise<User> {
-    await this.userRepository.update(id, updateData);
-    return this.findById(id);
+  async findUserWishes(id: number): Promise<Wish[]> {
+    const { wishes } = await this.userRepository.findOne({
+      where: {
+        id,
+      },
+      relations: {
+        wishes: true,
+      },
+    });
+    return wishes;
   }
 }

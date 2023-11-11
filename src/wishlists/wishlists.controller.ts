@@ -1,34 +1,68 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  UseGuards,
+  Request,
+  Get,
+  Param,
+  Patch,
+  Delete,
+  ConflictException,
+} from '@nestjs/common';
 import { WishlistsService } from './wishlists.service';
+import { JwtGuard } from '../guards/jwt.guard';
 import { CreateWishlistDto } from './dto/create-wishlist.dto';
+import { Wishlist } from './entities/wishlist.entity';
 import { UpdateWishlistDto } from './dto/update-wishlist.dto';
 
-@Controller('wishlists')
+@Controller('wishlistlists')
 export class WishlistsController {
-  constructor(private readonly wishlistsService: WishlistsService) {}
-
-  @Post()
-  create(@Body() createWishlistDto: CreateWishlistDto) {
-    return this.wishlistsService.create(createWishlistDto);
-  }
+  constructor(private readonly wishlistService: WishlistsService) {}
 
   @Get()
-  findAll() {
-    return this.wishlistsService.findAll();
+  async getAllWishlists() {
+    return await this.wishlistService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.wishlistsService.findOne(+id);
+  async getWishlist(@Param('id') id: string) {
+    return await this.wishlistService.findWishlistById(+id);
   }
 
+  @UseGuards(JwtGuard)
+  @Post()
+  async createWishlist(
+    @Request() req,
+    @Body() createWishlistDto: CreateWishlistDto,
+  ): Promise<Wishlist> {
+    return await this.wishlistService.createWishlist(
+      req.user,
+      createWishlistDto,
+    );
+  }
+
+  @UseGuards(JwtGuard)
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateWishlistDto: UpdateWishlistDto) {
-    return this.wishlistsService.update(+id, updateWishlistDto);
+  async updateWishlist(
+    @Request() req,
+    @Param('id') id: string,
+    @Body() updateWishlistDto: UpdateWishlistDto,
+  ): Promise<Wishlist> {
+    const { owner } = await this.wishlistService.findWishlistById(+id);
+    if (req.user.id !== owner.id) {
+      throw new ConflictException('Вы не можете изменять чужой вишлист');
+    }
+    return await this.wishlistService.updateWishlist(+id, updateWishlistDto);
   }
 
+  @UseGuards(JwtGuard)
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.wishlistsService.remove(+id);
+  async removeWishlist(@Request() req, @Param('id') id: string) {
+    const { owner } = await this.wishlistService.findWishlistById(+id);
+    if (req.user.id !== owner.id) {
+      throw new ConflictException('Вы не можете удалить чужой вишлист');
+    }
+    await this.wishlistService.removeWishlist(+id);
   }
 }
