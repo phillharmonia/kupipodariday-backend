@@ -29,7 +29,7 @@ export class OffersService {
     if (wish.owner.id === user.id) {
       throw new ConflictException('Нельзя скидываться на свой подарок');
     }
-    if (wish.raised + createOfferDto.amount > wish.price) {
+    if (createOfferDto.amount > wish.price - wish.raised) {
       throw new BadRequestException(
         'Сумма собранных средств не может превышать стоимость подарка',
       );

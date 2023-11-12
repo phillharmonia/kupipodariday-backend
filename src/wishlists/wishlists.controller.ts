@@ -20,13 +20,15 @@ import { UpdateWishlistDto } from './dto/update-wishlist.dto';
 export class WishlistsController {
   constructor(private readonly wishlistService: WishlistsService) {}
 
+  @UseGuards(JwtGuard)
   @Get()
   async getAllWishlists() {
     return await this.wishlistService.findAll();
   }
 
+  @UseGuards(JwtGuard)
   @Get(':id')
-  async getWishlist(@Param('id') id: string) {
+  async getWishlist(@Param('id') id: string): Promise<Wishlist> {
     return await this.wishlistService.findWishlistById(+id);
   }
 

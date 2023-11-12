@@ -9,11 +9,9 @@ import {
 import { Wish } from '../../wishes/entities/wish.entity';
 import { User } from '../../users/entities/user.entity';
 import { IsString, IsUrl, Length } from 'class-validator';
+import {DefaultEntity} from "../../entity/default-entity";
 @Entity()
-export class Wishlist {
-  @PrimaryGeneratedColumn()
-  id: number;
-
+export class Wishlist extends DefaultEntity{
   @Column()
   @Length(1, 250)
   @IsString()

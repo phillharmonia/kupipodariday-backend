@@ -13,6 +13,7 @@ import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { JwtGuard } from '../guards/jwt.guard';
+import {Wish} from "../wishes/entities/wish.entity";
 
 @UseGuards(JwtGuard)
 @Controller('users')
@@ -24,7 +25,7 @@ export class UserController {
   }
 
   @Get('me/wishes')
-  async getMeWishes(@Request() req) {
+  async getMeWishes(@Request() req): Promise<Wish[]> {
     return await this.usersService.findUserWishes(req.user.id);
   }
   @Get(':username')

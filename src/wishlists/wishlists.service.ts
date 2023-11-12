@@ -42,7 +42,7 @@ export class WishlistsService {
   findAll(): Promise<Wishlist[]> {
     return this.wishlistRepository.find();
   }
-  async findWishlistById(id: number) {
+  async findWishlistById(id: number): Promise<Wishlist> {
     const wishlist = await this.wishlistRepository.findOne({
       where: { id },
       relations: { owner: true, items: true },
@@ -52,7 +52,7 @@ export class WishlistsService {
     }
     return wishlist;
   }
-  async updateWishlist(id: number, updateWishlistDto: UpdateWishlistDto) {
+  async updateWishlist(id: number, updateWishlistDto: UpdateWishlistDto): Promise<Wishlist> {
     const wishlist = await this.findWishlistById(id);
 
     if (!wishlist) {

@@ -18,7 +18,7 @@ export class WishesService {
     private readonly dataSource: DataSource,
   ) {}
 
-  async create(createWishDto: CreateWishDto, user: User) {
+  async create(createWishDto: CreateWishDto, user: User): Promise<Wish> {
     const wish = this.wishRepository.create({ ...createWishDto, owner: user });
     return await this.wishRepository.save(wish);
   }
@@ -39,7 +39,7 @@ export class WishesService {
       take: 20,
     });
   }
-  async findWishById(id: number) {
+  async findWishById(id: number): Promise<Wish> {
     const wish = await this.wishRepository.findOne({
       where: { id },
       relations: { offers: true, owner: true },
@@ -49,7 +49,7 @@ export class WishesService {
     }
     return wish;
   }
-  async updateWish(id: number, updateWishDto: UpdateWishDto, user: User) {
+  async updateWish(id: number, updateWishDto: UpdateWishDto, user: User): Promise<Wish> {
     const wish = await this.findWishById(id);
 
     if (wish.owner.id !== user.id) {
@@ -74,7 +74,7 @@ export class WishesService {
     }
     await this.wishRepository.remove(wish);
   }
-  async copyWish(id: number, user: User) {
+  async copyWish(id: number, user: User): Promise<Wish> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
